@@ -1,0 +1,33 @@
+SHORT_COMMIT_ID = ""
+
+node {
+  stage('init') {
+    checkout scm
+
+    SHORT_COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+
+    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'password', usernameVariable: 'username')]) {
+      sh 'docker login -u "$username" -p "$password"'
+    }
+  }
+
+  stage('build image') {
+    dir('src') {
+      def image_tag = "${BRANCH_NAME}-${SHORT_COMMIT_ID}"
+
+      sh """
+        docker build -t secure-secret-k8s-operator .
+        docker tag secure-secret-k8s-operator sunnyredhu/secure-secret-k8s-operator:${image_tag}
+        docker push sunnyredhu/secure-secret-k8s-operator:${image_tag}
+      """
+
+      // Create latest tag for master
+      if (BRANCH_NAME == 'master') {
+        sh """
+          docker tag secure-secret-k8s-operator sunnyredhu/secure-secret-k8s-operator
+          docker push sunnyredhu/secure-secret-k8s-operator
+        """
+      }
+    }
+  }
+}
