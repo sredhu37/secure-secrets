@@ -68,8 +68,11 @@ def create_secret(spec, body, **kwargs):
     l_data = spec["data"]
     d_data = {}
 
+    l_secrets_in_namespace = o_k8s_api.list_namespaced_secret(body["metadata"]["namespace"]).items
+    o_cryption_secret, o_fernet_key = ssutils.get_latest_cryption_secret(l_secrets_in_namespace, body["metadata"]["namespace"], spec["decryptionKeyName"])
+
     for item in l_data:
-        d_data[item['key']] = item['value']
+        d_data[item['key']] = base64.b64encode(ssutils.decrypt_text(o_fernet_key, base64.b64decode(item["value"]).decode())).decode()
 
     o_secret = Secret(
         body["metadata"]["name"],
