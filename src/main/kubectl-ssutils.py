@@ -9,7 +9,7 @@
 
 
 from kubernetes import client, config
-import getopt, sys
+import getopt, sys, base64
 import ssutils
 
 
@@ -96,10 +96,11 @@ def main():
         # Encrypt the provided text
         if d_arguments["method"] == "encrypt":
             s_encrypted_text = ssutils.encrypt_text(o_fernet_key, d_arguments["text"])
-            print(f"Encrypted with key: {o_cryption_secret.metadata.name}; Encrypted value: {s_encrypted_text}")
+            s_encrypted_text_b64_encoded = base64.b64encode(s_encrypted_text.encode()).decode()
+            print(f"Encrypted with key: {o_cryption_secret.metadata.name}; Encrypted and b64 encoded value: {s_encrypted_text_b64_encoded}")
         elif d_arguments["method"] == "decrypt":
-            s_decrypted_text = ssutils.decrypt_text(o_fernet_key, d_arguments["text"])
-            print(f"Decrypted value: {s_decrypted_text}")
+            s_decrypted_text = ssutils.decrypt_text(o_fernet_key, base64.b64decode(d_arguments["text"]).decode())
+            print(f"b64 decoded and Decrypted value: {s_decrypted_text}")
     elif "secret" in d_arguments:
         # Encrypt the provided secret
         if d_arguments["method"] == "encrypt":

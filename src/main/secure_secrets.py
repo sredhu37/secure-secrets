@@ -65,11 +65,17 @@ class Secret:
 
 @kopf.on.create("securesecrets")
 def create_secret(spec, body, **kwargs):
+    l_data = spec["data"]
+    d_data = {}
+
+    for item in l_data:
+        d_data[item['key']] = item['value']
+
     o_secret = Secret(
         body["metadata"]["name"],
         body["metadata"]["namespace"],
         spec["secretType"],
-        spec["data"],
+        d_data,
         {
             'api': body["apiVersion"],
             'kind': body["kind"],

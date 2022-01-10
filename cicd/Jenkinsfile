@@ -17,7 +17,7 @@ node {
     }
   }
 
-  stage('build image') {
+  stage('build and push image') {
     dir('src/main') {
       def image_tag = "${BRANCH_NAME}-${SHORT_COMMIT_ID}"
 
