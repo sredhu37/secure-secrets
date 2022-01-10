@@ -18,4 +18,4 @@ RUN apk del gcc musl-dev libffi-dev openssl-dev python3-dev
 
 COPY . .
 
-CMD kopf run /app/secure_secrets.py
+CMD kopf run -A /app/secure_secrets.py
