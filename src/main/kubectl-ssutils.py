@@ -90,7 +90,7 @@ def main():
     l_secrets_in_namespace = O_K8S_API.list_namespaced_secret(d_arguments["namespace"]).items
 
     o_cryption_secret, o_fernet_key = ssutils.get_latest_cryption_secret(l_secrets_in_namespace, d_arguments["namespace"], d_arguments["encryptionsecret"])
-    # print(f"cryption_secret: {cryption_secret}")
+    # print(f"o_cryption_secret: {o_cryption_secret}")
 
     if "text" in d_arguments:
         # Encrypt the provided text

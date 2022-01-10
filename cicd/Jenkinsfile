@@ -11,8 +11,14 @@ node {
     }
   }
 
+  stage('test') {
+    dir('src/test') {
+      sh 'python3 test_ssutils_methods.py -v'
+    }
+  }
+
   stage('build image') {
-    dir('src') {
+    dir('src/main') {
       def image_tag = "${BRANCH_NAME}-${SHORT_COMMIT_ID}"
 
       sh """
